@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 namespace FilmsCatalogTestTask.Data.Models
 {
     [Table("films")]
-    [Index(nameof(Name), IsUnique = false)]
+    [Index(nameof(Director), IsUnique = false)]
+    [Index(nameof(Release), IsUnique = false)]
     public class Film
     {
         [Key]

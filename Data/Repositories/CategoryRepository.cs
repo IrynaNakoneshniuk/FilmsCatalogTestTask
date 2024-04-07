@@ -1,9 +1,9 @@
-﻿
+﻿using FilmsCatalogTestTask.Data.Models;
 using FilmsCatalogTestTask.Data.ModelsDB;
 
 namespace FilmsCatalogTestTask.Data.Repositories
 {
-    public class CategoryRepository : IDataAccess
+    public class CategoryRepository 
     {
         private readonly FilmsCatalogContext _context;
 
@@ -11,27 +11,28 @@ namespace FilmsCatalogTestTask.Data.Repositories
         {
            _context = context;
         }
-        public Task<object> Create(Object newObject)
+
+        public Task<Category> Create(Category newObject)
         {
             throw new NotImplementedException();
         }
 
-        public Task Delete(object deleteObject)
+        public Task Delete(Category deleteObject)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IQueryable<object>> GetAll(int pageNumber, int pageSize)
+        public Task<IEnumerable<Category>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<object> GetById(int id)
+        public Task<IEnumerable<Category>> GetPageOfFilms(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
 
-        public Task<object> Update(object updateObject)
+        public Task<Category> Update(Category updateObject)
         {
             throw new NotImplementedException();
         }

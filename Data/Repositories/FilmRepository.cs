@@ -2,10 +2,11 @@
 using FilmsCatalogTestTask.Data.ModelsDB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Data.Common;
 
 namespace FilmsCatalogTestTask.Data.Repositories;
 
-public class FilmRepository : IDataAccess<Film>
+public class FilmRepository : IRepository<Film>
 {
     private readonly FilmsCatalogContext _context;
     private readonly ILogger<FilmRepository> _logger;
@@ -20,9 +21,6 @@ public class FilmRepository : IDataAccess<Film>
     {
         try
         {
-            if (newObject == null)
-                throw new ArgumentNullException(nameof(newObject), "New object cannot be null.");
-
             EntityEntry<Film> entityEntry = await _context.Films.AddAsync(newObject);
             await _context.SaveChangesAsync();
 
@@ -30,9 +28,9 @@ public class FilmRepository : IDataAccess<Film>
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "An error occurred while saving changes to the database.");
+            _logger.LogError(ex,"An error occurred while saving to the database.");
 
-            return new Film() { Name=string.Empty,Director= string.Empty };
+            throw;
         }
     }
 
@@ -46,23 +44,67 @@ public class FilmRepository : IDataAccess<Film>
 
         }catch(DbUpdateException ex) {
 
-            _logger.LogError(ex, "An error occurred while saving changes to the database.");
+           _logger.LogError(ex, "An error occurred while removing from database.");
         }
     }
 
 
-    public Task<Film> Update(Film updateObject)
+    public async Task<Film> Update(Film updateObject)
     {
-        throw new NotImplementedException();
+        try
+        {
+            EntityEntry<Film> entityEntry = _context.Films.Update(updateObject);
+            await _context.SaveChangesAsync();
+
+            return entityEntry.Entity;
+        }
+        catch( DbUpdateException ex)
+        {
+            _logger.LogError(ex, "An error occurred while updating to the database.");
+
+            throw;
+        }
     }
 
-    Task<IEnumerable<Film>> IDataAccess<Film>.GetAll(int pageNumber, int pageSize)
+ 
+    public async Task<Film> GetById(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            Film? film = await _context.Films
+                .Include(film => film.FilmCategories)
+                .ThenInclude(filmCategory => filmCategory.Category)
+                .Where(film=> film.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (film == null)
+            {
+                throw new InvalidOperationException($"Film with id = {id} not found");
+            }
+            return film;
+
+        }
+        catch(DbException ex)
+        {
+            _logger.LogError(ex, "An error occurred while searching film by id.");
+
+            throw;
+        }
     }
 
-    Task<Film> IDataAccess<Film>.GetById(int id)
+    public async Task<IQueryable<Film>> GetAll()
     {
-        throw new NotImplementedException();
+        try
+        {
+            return  _context.Films
+                .Include(film => film.FilmCategories)
+                .ThenInclude(filmCategory => filmCategory.Category);
+
+        }catch(DbException ex)
+        {
+            _logger.LogError(ex, "An error occurred while loading full list of films");
+
+            throw;
+        }
     }
 }
