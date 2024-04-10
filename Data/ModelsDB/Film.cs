@@ -25,6 +25,6 @@ namespace FilmsCatalogTestTask.Data.Models
         [Column("release")]
         public DateTime Release { get; set; }
 
-        public ICollection<FilmCategory> FilmCategories { get; set; }
+        public ICollection<FilmCategory> FilmCategories { get; set; }= new List<FilmCategory>();    
     }
 }

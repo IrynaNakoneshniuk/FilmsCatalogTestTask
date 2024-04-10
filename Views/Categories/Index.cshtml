@@ -1,0 +1,58 @@
+﻿@using FilmsCatalogTestTask.Data.Models
+@model IEnumerable<Category>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+               <label>Name</label>
+            </th>
+            <th>
+                <label>Parent Category</label>
+            </th>
+            <th>
+                <label>Film Count</label>
+            </th>
+            <th>
+                <label>Nested Level</label>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.ParentCategory?.Name
+                    </td>
+                    <td>
+                        @item.FilmCategories.Count
+                    </td> 
+                     <td>
+                        @item.NestedLevel
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

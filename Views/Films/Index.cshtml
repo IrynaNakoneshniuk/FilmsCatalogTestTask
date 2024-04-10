@@ -1,11 +1,8 @@
-﻿@model IEnumerable<FilmsCatalogTestTask.Data.Models.Film>
-
+﻿@using FilmsCatalogTestTask.Services.Pagination
+@model FilmPagination
 @{
-    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -14,35 +11,70 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                <a asp-action="Index" asp-route-orderBy="Name">Name</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Director)
+                <a asp-action="Index" asp-route-orderBy="Director">Director</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Release)
+                <a asp-action="Index" asp-route-orderBy="Release">Release</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-orderBy="Release">Category</a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Director)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Release)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @if (Model.Films != null)
+        {
+            @foreach (var film in Model.Films)
+            {
+                <tr>
+                    <td>
+                        @film.Name
+                    </td>
+                    <td>
+                        @film.Director
+                    </td>
+                    <td>
+                        @film.Release.ToShortDateString()
+                    </td>
+                    <td>
+                        @foreach (var category in film.FilmCategories)
+                        {
+                            @category.Category.Name
+                            @if (!category.Equals(film.FilmCategories.Last()))
+                            {
+                                <span>,</span>
+                            }
+                        }
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@film.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@film.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@film.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
     </tbody>
 </table>
+
+@if (Model.TotalPage > 1)
+{
+    <div>
+        Page @(Model.PageNumber) of @Model.TotalPage
+    </div>
+    <div>
+        @if (Model.PageNumber < Model.TotalPage)
+        {
+            <a asp-action="Index" asp-route-pageNumber="@(Model.PageNumber+ 1)">Next</a>
+        }
+        @if (Model.PageNumber > 1)
+        {
+            <a asp-action="Index" asp-route-pageNumber="@(Model.PageNumber- 1)">Previous</a>
+        }
+    </div>
+}

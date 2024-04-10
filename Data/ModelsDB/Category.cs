@@ -21,6 +21,9 @@ namespace FilmsCatalogTestTask.Data.Models
         public int? ParentCategoryId { get; set; }
         public Category? ParentCategory { get; set; }
 
-        public ICollection<FilmCategory> FilmCategories { get; set; }
+        public ICollection<FilmCategory> FilmCategories { get; set; }=new List<FilmCategory>();
+
+        [NotMapped]
+        public int NestedLevel { get; set; }
     }
 }
