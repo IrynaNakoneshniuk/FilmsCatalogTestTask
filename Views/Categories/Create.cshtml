@@ -17,20 +17,39 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ParentCategoryId" class="control-label"></label>
-                <select asp-for="ParentCategoryId" class ="form-control" asp-items="ViewBag.ParentCategoryId"></select>
+                <label asp-for="ParentCategoryId" class="control-label">Parent category</label>
+                <select asp-for="ParentCategoryId" class="form-control" asp-items="ViewBag.ParentCategoryId">
+                    <option value="">-- Select Parent Category --</option>
+                </select>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-1">
                 <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            <div class="form-group mt-1">
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Name').change(function () {
+                var name = $(this).val();
+                var parentCategoryName = $('#ParentCategoryId option:selected').text();
+
+                if (name === parentCategoryName) {
+                    $(this).addClass('is-invalid');
+                    $(this).siblings('.text-danger').text('Name cannot be the same as Parent Category name.');
+                    $('input[type="submit"]').prop('disabled', true);
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).siblings('.text-danger').text('');
+                    $('input[type="submit"]').prop('disabled', false);
+                }
+            });
+        });
+    </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
