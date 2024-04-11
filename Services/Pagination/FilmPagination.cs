@@ -7,6 +7,7 @@ namespace FilmsCatalogTestTask.Services.Pagination
     public class FilmPagination : IFilmPagination
     {
         private readonly IFilmRepository _filmRepository;
+
         private readonly ILogger<FilmPagination> _logger;
         public int TotalPage { get; set; } = 1;
         public int PageNumber { get; set; } = 1;

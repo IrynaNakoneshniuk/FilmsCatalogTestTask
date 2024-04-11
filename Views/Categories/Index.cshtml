@@ -7,13 +7,13 @@
 }
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 <table class="table">
     <thead class="table-light">
         <tr>
             <th>
-               <label>Name</label>
+                <label>Name</label>
             </th>
             <th>
                 <label>Parent Category</label>
@@ -24,6 +24,7 @@
             <th>
                 <label>Nested Level</label>
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -40,14 +41,14 @@
                     </td>
                     <td>
                         @item.FilmCategories.Count
-                    </td> 
-                     <td>
+                    </td>
+                    <td>
                         @item.NestedLevel
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-link">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-link">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-link">Delete</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-link">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-link">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-link"c>Delete</a>
                     </td>
                 </tr>
             }
