@@ -85,7 +85,7 @@ public class FilmRepository : IFilmRepository
     }
 
 
-    public async Task<Film> UpdateAsync(Film ?updateObject)
+    public async Task<Film> UpdateAsync(Film ?updateObject, List<int>? categories)
     {
         try
         {
@@ -95,6 +95,21 @@ public class FilmRepository : IFilmRepository
                     "The object passed for film update cannot be null.");
             }
 
+            if (categories != null && categories.Count > 0)
+            {
+                updateObject.FilmCategories = new List<FilmCategory>();
+
+                foreach (var category in categories)
+                {
+                    FilmCategory filmCategory = new FilmCategory
+                    {
+                        FilmId = updateObject.Id,
+                        CategoryId = category
+                    };
+
+                    updateObject.FilmCategories.Add(filmCategory);
+                }
+            }
             EntityEntry<Film> entityEntry = _context.Films.Update(updateObject);
             await _context.SaveChangesAsync();
 

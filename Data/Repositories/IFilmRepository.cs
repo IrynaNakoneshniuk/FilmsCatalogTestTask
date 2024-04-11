@@ -8,6 +8,6 @@ namespace FilmsCatalogTestTask.Data.Repositories
         Task DeleteAsync(Film ?deleteObject);
         IQueryable<Film> GetAllQueryable();
         Task<Film> GetByIdAsync(int ?id);
-        Task<Film> UpdateAsync(Film ?updateObject);
+        Task<Film> UpdateAsync(Film ?updateObject, List<int>? categories);
     }
 }

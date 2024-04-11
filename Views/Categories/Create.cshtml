@@ -49,6 +49,17 @@
                     $('input[type="submit"]').prop('disabled', false);
                 }
             });
+
+            $('form').submit(function () {
+                var name = $('#Name').val();
+                var parentCategoryName = $('#ParentCategoryId option:selected').text();
+
+                if (name === parentCategoryName) {
+                    $('#Name').addClass('is-invalid');
+                    $('#Name').siblings('.text-danger').text('Name cannot be the same as Parent Category name.');
+                    return false;
+                }
+            });
         });
     </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

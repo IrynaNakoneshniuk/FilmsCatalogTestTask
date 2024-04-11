@@ -40,9 +40,11 @@ namespace FilmsCatalogTestTask.Controllers
         }
 
 
-        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
+            var categories = await _repositoryCategory.GetAllAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");
+
             if (id == null)
             {
                 return BadRequest();
@@ -58,13 +60,13 @@ namespace FilmsCatalogTestTask.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Film? film)
+        public async Task<IActionResult> Edit(Film? film, List<int>? categories)
         {
             if (film == null)
             {
                 return BadRequest();
             }
-            await _filmRepository.UpdateAsync(film);
+            await _filmRepository.UpdateAsync(film, categories);
 
             return View();
         }

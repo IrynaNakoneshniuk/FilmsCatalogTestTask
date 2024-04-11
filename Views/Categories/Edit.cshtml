@@ -13,28 +13,58 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ParentCategoryId" class="control-label"></label>
-                <select asp-for="ParentCategoryId" class="form-control" asp-items="ViewBag.ParentCategoryId"></select>
-                <span asp-validation-for="ParentCategoryId" class="text-danger"></span>
+                <label asp-for="ParentCategoryId" class="control-label">Parent category</label>
+                <select asp-for="ParentCategoryId" class="form-control" asp-items="ViewBag.ParentCategoryId">
+                    <option value="">-- Select Parent Category --</option>
+                </select>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group mt-1">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            <div class="form-group mt-1">
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('#Name').change(function () {
+                var name = $(this).val();
+                var parentCategoryName = $('#ParentCategoryId option:selected').text();
+
+                if (name === parentCategoryName) {
+                    $(this).addClass('is-invalid');
+                    $(this).siblings('.text-danger').text('Name cannot be the same as Parent Category name.');
+                    $('input[type="submit"]').prop('disabled', true);
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).siblings('.text-danger').text('');
+                    $('input[type="submit"]').prop('disabled', false);
+                }
+            });
+
+            $('form').submit(function () {
+                var name = $('#Name').val();
+                var parentCategoryName = $('#ParentCategoryId option:selected').text();
+
+                if (name === parentCategoryName) {
+                    $('#Name').addClass('is-invalid');
+                    $('#Name').siblings('.text-danger').text('Name cannot be the same as Parent Category name.');
+                    return false;
+                }
+            });
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

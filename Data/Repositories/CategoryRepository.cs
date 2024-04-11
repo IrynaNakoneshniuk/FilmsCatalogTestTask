@@ -169,13 +169,16 @@ namespace FilmsCatalogTestTask.Data.Repositories
         {
             try
             {
-                if (updateObject.Id.Equals(updateObject.ParentCategoryId)
-                    && updateObject.ParentCategory.Id.Equals(updateObject.Id))
+                if (updateObject.ParentCategory != null)
                 {
-                    _logger.LogError("Parent and new object can't be equals. Object Id: {Id}", updateObject.Id);
-                    throw new ArgumentException("Parent and new object can`t be equals");
+                    if (updateObject.Id.Equals(updateObject.ParentCategoryId)
+                      && updateObject.ParentCategory.Id.Equals(updateObject.Id))
+                    {
+                        _logger.LogError("Parent and new object can't be equals. Object Id: {Id}", updateObject.Id);
+                        throw new ArgumentException("Parent and new object can`t be equals");
+                    }
                 }
-
+                
                 EntityEntry<Category> categoryEntry = _context.Categories.Update(updateObject);
                 await _context.SaveChangesAsync();
 
