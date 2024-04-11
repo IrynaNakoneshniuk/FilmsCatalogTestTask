@@ -18,7 +18,7 @@ public class FilmRepository : IFilmRepository
     }
 
 
-    public async Task<Film> CreateAsync(Film ?newObject, List<Category>? categories = default)
+    public async Task<Film> CreateAsync(Film ?newObject, List<int> categories = default)
     {
         try
         {
@@ -36,8 +36,8 @@ public class FilmRepository : IFilmRepository
                 {
                     FilmCategory filmCategory = new FilmCategory
                     {
-                        Film = filmEntry.Entity,
-                        Category = category
+                        FilmId = filmEntry.Entity.Id,
+                        CategoryId = category
                     };
 
                     filmEntry.Entity.FilmCategories.Add(filmCategory);
@@ -142,14 +142,13 @@ public class FilmRepository : IFilmRepository
     }
 
 
-    public IQueryable<Film> GetAllAsync()
+    public IQueryable<Film> GetAllQueryable()
     {
         try
         {
             return _context.Films
                 .Include(film => film.FilmCategories)
                 .ThenInclude(filmCategory => filmCategory.Category);
-
         }
         catch (DbException ex)
         {

@@ -8,14 +8,10 @@ namespace FilmsCatalogTestTask.Services.Pagination
     {
         private readonly IFilmRepository _filmRepository;
         private readonly ILogger<FilmPagination> _logger;
-        public string? OrderBy { get; set; }
-        public string? FilterByDate { get; set; }
-        public string? FilterByCategory { get; set; }
         public int TotalPage { get; set; } = 1;
         public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 20;
+        public int PageSize { get; set; }
         public IEnumerable<Film> Films { get; set; } = new List<Film>();
-
         public FilmPagination(IFilmRepository filmRepository, ILogger<FilmPagination> logger)
         {
             _filmRepository = filmRepository;
@@ -27,11 +23,11 @@ namespace FilmsCatalogTestTask.Services.Pagination
         }
 
         public IQueryable<Film> ApplyFilters(string? orderBy = default, string? filterByDate = default,
-            string? filterByCategory = default)
+            int? filterByCategory = default, string? filterByDirector = default)
         {
             try
             {
-                var filteredFilmsQuery = _filmRepository.GetAll();
+                var filteredFilmsQuery = _filmRepository.GetAllQueryable();
 
                 if (orderBy == "desc")
                 {
@@ -48,41 +44,48 @@ namespace FilmsCatalogTestTask.Services.Pagination
                     filteredFilmsQuery = filteredFilmsQuery.Where(f => f.Release == releaseDate);
                 }
 
-                if (!string.IsNullOrEmpty(filterByCategory))
+                if (filterByCategory != null)
                 {
-                    filteredFilmsQuery = filteredFilmsQuery.Where(f => f.FilmCategories.Any(fc => fc.Category.Name.Equals(filterByCategory)));
+                    filteredFilmsQuery = filteredFilmsQuery.Where(f => f.FilmCategories.Any(fc => fc.Category.Id.Equals(filterByCategory)));
+                }
+
+                if (!string.IsNullOrEmpty(filterByDirector))
+                {
+                    filteredFilmsQuery = filteredFilmsQuery.Where(f => f.Director.Equals(filterByDirector));
                 }
 
                 return filteredFilmsQuery;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while  apply filters.");
                 return new List<Film>().AsQueryable();
             }
         }
 
-        public async Task<FilmPagination> GetFilmsPage(int? pageNumber,string? orderBy = default, string? filterByDate = default,
-            string? filterByCategory = default)
+        public async Task<FilmPagination> GetFilmsPage(int pageNumber, int? sizePage , string? orderBy = default, string? filterByDate = default,
+            int? filterByCategory = default, string? filterByDirector = default)
         {
             try
             {
-                var films = ApplyFilters(orderBy, filterByDate, filterByCategory); 
+                var films = ApplyFilters(orderBy, filterByDate, filterByCategory, filterByDirector);
                 int amountFilms = films.Count();
-                
-                TotalPage = (int)Math.Ceiling((double)amountFilms / PageSize);
-                PageNumber = (int)pageNumber;
 
+                PageNumber = pageNumber;
+                PageSize = sizePage??10;
+                TotalPage = (int)Math.Ceiling((double)(amountFilms / PageSize));
+               
                 Films = await films.Skip(PageSize * (PageNumber - 1))
                      .Take(PageSize)
                      .AsNoTracking()
                      .ToListAsync();
-                     
+
                 return new FilmPagination()
                 {
                     TotalPage = this.TotalPage,
                     Films = this.Films,
-                    PageNumber = this.PageNumber
+                    PageNumber = this.PageNumber,
+                    PageSize=this.PageSize
                 };
             }
             catch (Exception ex)

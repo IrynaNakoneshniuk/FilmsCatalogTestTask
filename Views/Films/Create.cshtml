@@ -30,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label>Categories</label>
-                <select asp-for="FilmCategories" class="form-control" asp-items="ViewBag.ParentCategoryId" multiple></select>
+                <select name="categories" class="form-control" asp-items="ViewBag.Category" multiple></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

@@ -14,11 +14,11 @@ namespace FilmsCatalogTestTask.Data.Models
         [ForeignKey(nameof(Film))]
         [Column("film_id")]
         public int FilmId { get; set; }
-        public required Film Film { get; set; }
+        public Film Film { get; set; }
 
         [ForeignKey(nameof(Category))]
         [Column("category_id")]
         public int CategoryId { get; set; }
-        public required Category Category { get; set; }
+        public  Category Category { get; set; }
     }
 }

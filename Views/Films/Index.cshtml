@@ -4,77 +4,160 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <a asp-action="Index" asp-route-orderBy="Name">Name</a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-orderBy="Director">Director</a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-orderBy="Release">Release</a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-orderBy="Release">Category</a>
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Films != null)
-        {
-            @foreach (var film in Model.Films)
-            {
-                <tr>
-                    <td>
-                        @film.Name
-                    </td>
-                    <td>
-                        @film.Director
-                    </td>
-                    <td>
-                        @film.Release.ToShortDateString()
-                    </td>
-                    <td>
-                        @foreach (var category in film.FilmCategories)
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <form id="filterForm" asp-action="Index" method="get"  class="row gx-3 gy-2 align-items-center">
+                <div class="col-sm-3">
+                    <label for="releaseDate" class="sr-only">Release Date:</label>
+                    <input type="date" id="releaseDate" name="releaseDate" class="form-control">
+                </div>
+                <div class="col-sm-3">
+                    <label for="director" class="sr-only">Director:</label>
+                    <input type="text" id="director" name="director" class="form-control">
+                </div>
+                <div class="col-sm-3">
+                    <label for="director" class="sr-only">Size:</label>
+                    <select id="sizePage" name="sizePage" class="form-control">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label for="category" class="sr-only">Category:</label>
+                    <select id="category" name="category" class="form-control">
+                        <option value="">All Categories</option>
+                        @foreach (var category in ViewBag.Categories.Items)
                         {
-                            @category.Category.Name
-                            @if (!category.Equals(film.FilmCategories.Last()))
-                            {
-                                <span>,</span>
-                            }
+                            <option value="@category.Id">@category.Name</option>
                         }
-                    </td>
+                    </select>
+                </div>
+                <div class="d-grid gap-2 d-md-flex">
+                    <button type="submit" id="filterBtn" class="btn btn-primary">Filter</button>
+                    <button asp-action="Index" formmethod="get" id="filterBtnClear" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+           
+        </div>
+    </div>
+</div>
 
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@film.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@film.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@film.Id">Delete</a>
-                    </td>
-                </tr>
+    <div class="row">
+        <div class="col-md-12">
+        <table class="table">
+            <thead class="table-light">
+                    <tr>
+                        <th>
+                           <lable>Name</lable>
+                        </th>
+                        <th>
+                        <lable>Director</lable>
+                        </th>
+                    <th>
+                        <a id="sortDate" asp-action="Index" asp-route-sortByDate="asc">
+                            Sort by date
+                            <span class="glyphicon glyphicon-triangle-top"></span>
+                            <span class="glyphicon glyphicon-triangle-bottom" style="display: none;"></span>
+                        </a>
+                    </th>
+                        <th>
+                        <lable>Category</lable>
+                        </th>
+                        <th></th>
+                    <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Films != null)
+                    {
+                        @foreach (var film in Model.Films)
+                        {
+                            <tr>
+                                <td>
+                                    @film.Name
+                                </td>
+                                <td>
+                                    @film.Director
+                                </td>
+                                <td>
+                                    @film.Release.ToShortDateString()
+                                </td>
+                                <td>
+                                    @foreach (var category in film.FilmCategories)
+                                    {
+                                        @category.Category.Name
+                                        @if (!category.Equals(film.FilmCategories.Last()))
+                                        {
+                                            <span>,</span>
+                                        }
+                                    }
+                                </td>
+
+                                <td>
+                                <a asp-action="Edit" asp-route-id="@film.Id" class="btn btn-link">Edit</a>
+                                <a asp-action="Details" asp-route-id="@film.Id" class="btn btn-link">Details</a>
+                                <a asp-action="Delete" asp-route-id="@film.Id" class="btn btn-link">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            @if (Model.TotalPage > 1)
+            {
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        }
+                        @for (int i = 1; i <= Model.TotalPage; i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+                            </li>
+                        }
+                        @if (Model.PageNumber < Model.TotalPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
             }
-        }
-    </tbody>
-</table>
+        </div>
+    </div>
 
-@if (Model.TotalPage > 1)
-{
-    <div>
-        Page @(Model.PageNumber) of @Model.TotalPage
-    </div>
-    <div>
-        @if (Model.PageNumber < Model.TotalPage)
-        {
-            <a asp-action="Index" asp-route-pageNumber="@(Model.PageNumber+ 1)">Next</a>
-        }
-        @if (Model.PageNumber > 1)
-        {
-            <a asp-action="Index" asp-route-pageNumber="@(Model.PageNumber- 1)">Previous</a>
-        }
-    </div>
-}
+<script>
+    $(document).ready(function () {
+
+        $('#sortDate').click(function (e) {
+            e.preventDefault();
+
+            var sortDirection = $(this).attr('asp-route-sortByDate');
+            sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
+
+            console.log(sortDirection);
+
+            if (sortDirection === 'asc') {
+                $('.glyphicon-triangle-top').show();
+                $('.glyphicon-triangle-bottom').hide();
+            } else {
+                $('.glyphicon-triangle-top').hide();
+                $('.glyphicon-triangle-bottom').show();
+            }
+        });
+    });
+
+
+</script>

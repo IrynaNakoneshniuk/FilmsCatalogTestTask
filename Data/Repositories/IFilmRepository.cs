@@ -4,9 +4,9 @@ namespace FilmsCatalogTestTask.Data.Repositories
 {
     public interface IFilmRepository
     {
-        Task<Film> CreateAsync(Film? newObject, List<Category>? categories = null);
+        Task<Film> CreateAsync(Film? newObject, List<int>? categories = null);
         Task DeleteAsync(Film ?deleteObject);
-        IQueryable<Film> GetAllAsync();
+        IQueryable<Film> GetAllQueryable();
         Task<Film> GetByIdAsync(int ?id);
         Task<Film> UpdateAsync(Film ?updateObject);
     }

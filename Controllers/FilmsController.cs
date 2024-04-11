@@ -21,10 +21,16 @@ namespace FilmsCatalogTestTask.Controllers
         }
 
         // GET: Films
-        public async Task<IActionResult> Index(int ?pageNumber)
+        public async Task<IActionResult> Index(int? sizePage,int pageNumber, int ?category,string sortByDate, DateTime? releaseDate, string director)
         {
-            pageNumber = pageNumber ?? 1;
-            var films = await _filmPagination.GetFilmsPage(pageNumber);
+            var categories = await _repositoryCategory.GetAllAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");
+
+            if (pageNumber == 0)
+            {
+                pageNumber = 1;
+            }
+            var films = await _filmPagination.GetFilmsPage(pageNumber, sizePage, sortByDate, releaseDate.ToString(), category, director);
 
             if (films == null)
             {
@@ -32,6 +38,7 @@ namespace FilmsCatalogTestTask.Controllers
             }
             return View(films);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
@@ -75,7 +82,6 @@ namespace FilmsCatalogTestTask.Controllers
             return View();
         }
 
-        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -111,21 +117,20 @@ namespace FilmsCatalogTestTask.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Film? film)
+        public async Task<IActionResult> Create(Film? film, List<int> categories)
         {
-
             if (film == null)
             {
                 return BadRequest();
             }
-            await _filmRepository.CreateAsync(film); 
+            await _filmRepository.CreateAsync(film,categories); 
             return View();  
         }
 
         public async Task<IActionResult> Create()
         {
             var categories = await _repositoryCategory.GetAllAsync();
-            ViewData["ParentCategoryId"] = new SelectList(categories, "Id", "Name");
+            ViewBag.Category = new SelectList(categories, "Id", "Name");
 
             return View();
         }
