@@ -11,7 +11,7 @@ namespace FilmsCatalogTestTask.Services.Pagination
         private readonly ILogger<FilmPagination> _logger;
         public int TotalPage { get; set; } = 1;
         public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; }
+        public int PageSize { get; set; } = 20;
         public IEnumerable<Film> Films { get; set; } = new List<Film>();
         public FilmPagination(IFilmRepository filmRepository, ILogger<FilmPagination> logger)
         {
@@ -64,7 +64,7 @@ namespace FilmsCatalogTestTask.Services.Pagination
             }
         }
 
-        public async Task<FilmPagination> GetFilmsPage(int pageNumber, int? sizePage , string? orderBy = default, string? filterByDate = default,
+        public async Task<FilmPagination> GetFilmsPage(int pageNumber, string? orderBy = default, string? filterByDate = default,
             int? filterByCategory = default, string? filterByDirector = default)
         {
             try
@@ -73,10 +73,9 @@ namespace FilmsCatalogTestTask.Services.Pagination
                 int amountFilms = films.Count();
 
                 PageNumber = pageNumber;
-                PageSize = sizePage??10;
-                TotalPage = (int)Math.Ceiling((double)(amountFilms / PageSize));
+                TotalPage = ((int)Math.Ceiling((double)amountFilms / (double)PageSize));
                
-                Films = await films.Skip(PageSize * (PageNumber - 1))
+                Films = await films.Skip(PageSize * (PageNumber-1))
                      .Take(PageSize)
                      .AsNoTracking()
                      .ToListAsync();

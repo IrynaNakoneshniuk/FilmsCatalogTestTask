@@ -21,7 +21,7 @@ namespace FilmsCatalogTestTask.Controllers
         }
 
         // GET: Films
-        public async Task<IActionResult> Index(int? sizePage,int pageNumber, int ?category,string sortByDate, DateTime? releaseDate, string director)
+        public async Task<IActionResult> Index(int pageNumber, int ?category,string sortByDate, DateTime? releaseDate, string director)
         {
             var categories = await _repositoryCategory.GetAllAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
@@ -30,7 +30,7 @@ namespace FilmsCatalogTestTask.Controllers
             {
                 pageNumber = 1;
             }
-            var films = await _filmPagination.GetFilmsPage(pageNumber, sizePage, sortByDate, releaseDate.ToString(), category, director);
+            var films = await _filmPagination.GetFilmsPage(pageNumber,  sortByDate, releaseDate.ToString(), category, director);
 
             if (films == null)
             {
@@ -124,7 +124,7 @@ namespace FilmsCatalogTestTask.Controllers
                 return BadRequest();
             }
             await _filmRepository.CreateAsync(film,categories); 
-            return View();  
+            return RedirectToAction(nameof(Index));  
         }
 
         public async Task<IActionResult> Create()

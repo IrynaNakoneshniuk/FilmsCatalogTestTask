@@ -17,14 +17,6 @@
                     <input type="text" id="director" name="director" class="form-control">
                 </div>
                 <div class="col-sm-3">
-                    <label for="director" class="sr-only">Size:</label>
-                    <select id="sizePage" name="sizePage" class="form-control">
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                    </select>
-                </div>
-                <div class="col-sm-3">
                     <label for="category" class="sr-only">Category:</label>
                     <select id="category" name="category" class="form-control">
                         <option value="">All Categories</option>
@@ -37,6 +29,9 @@
                 <div class="d-grid gap-2 d-md-flex">
                     <button type="submit" id="filterBtn" class="btn btn-primary">Filter</button>
                     <button asp-action="Index" formmethod="get" id="filterBtnClear" class="btn btn-secondary">Clear</button>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button asp-action="Create" formmethod="get" class="btn btn-primary">Create film</button>
+                    </div>
                 </div>
             </form>
            
@@ -138,26 +133,4 @@
         </div>
     </div>
 
-<script>
-    $(document).ready(function () {
 
-        $('#sortDate').click(function (e) {
-            e.preventDefault();
-
-            var sortDirection = $(this).attr('asp-route-sortByDate');
-            sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
-
-            console.log(sortDirection);
-
-            if (sortDirection === 'asc') {
-                $('.glyphicon-triangle-top').show();
-                $('.glyphicon-triangle-bottom').hide();
-            } else {
-                $('.glyphicon-triangle-top').hide();
-                $('.glyphicon-triangle-bottom').show();
-            }
-        });
-    });
-
-
-</script>
